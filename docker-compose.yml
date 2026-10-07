@@ -1,0 +1,15 @@
+services:
+  db:
+    image: mysql:8.0
+    container_name: nonna_back_mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: nonna
+    ports:
+      - "3306:3306"
+    volumes:
+      - nonna_back_db_data:/var/lib/mysql
+      - ./schema.sql:/docker-entrypoint-initdb.d/schema.sql
+
+volumes:
+  nonna_back_db_data:
