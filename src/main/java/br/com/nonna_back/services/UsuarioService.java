@@ -1,10 +1,12 @@
 package br.com.nonna_back.services;
 
 import br.com.nonna_back.dtos.PageDto;
+import br.com.nonna_back.dtos.UsuarioAtualizacaoDto;
 import br.com.nonna_back.entities.Usuario;
 import br.com.nonna_back.exceptions.RecursoNaoEncontradoException;
 import br.com.nonna_back.exceptions.RegraNegocioException;
 import br.com.nonna_back.repositories.UsuarioRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,7 +15,12 @@ import java.util.UUID;
 @Service
 public class UsuarioService {
     private final UsuarioRepository repository;
-    public UsuarioService(UsuarioRepository repository) { this.repository = repository; }
+    private final PasswordEncoder passwordEncoder;
+
+    public UsuarioService(UsuarioRepository repository, PasswordEncoder passwordEncoder) {
+        this.repository = repository;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     @Transactional
     public Usuario criar(Usuario usuario) {
@@ -21,6 +28,8 @@ public class UsuarioService {
             throw new RegraNegocioException("E-MAIL JÁ CADASTRADO");
         }
         usuario.setId(UUID.randomUUID().toString());
+        // Nunca guardamos a senha como veio do formulario: so o hash.
+        usuario.setSenha(passwordEncoder.encode(usuario.getSenha()));
         repository.salvar(usuario);
         return usuario;
     }
@@ -36,16 +45,23 @@ public class UsuarioService {
     }
 
     @Transactional
-    public Usuario atualizar(String id, Usuario usuario) {
+    public Usuario atualizar(String id, UsuarioAtualizacaoDto dto) {
         Usuario existente = buscarPorId(id);
-        repository.buscarPorEmail(usuario.getEmail()).ifPresent(outro -> {
+        repository.buscarPorEmail(dto.getEmail()).ifPresent(outro -> {
             if (!outro.getId().equals(id)) throw new RegraNegocioException("E-MAIL JÁ CADASTRADO");
         });
-        existente.setNome(usuario.getNome());
-        existente.setEmail(usuario.getEmail());
-        existente.setSenha(usuario.getSenha());
-        existente.setTelefone(usuario.getTelefone());
-        existente.setTipo(usuario.getTipo());
+        existente.setNome(dto.getNome());
+        existente.setEmail(dto.getEmail());
+        existente.setTelefone(dto.getTelefone());
+        existente.setTipo(dto.getTipo());
+        // Senha em branco = "nao quero trocar a senha". Quando vem
+        // preenchida, exige a senha atual batendo -- so o token nao basta.
+        if (dto.getSenha() != null && !dto.getSenha().isBlank()) {
+            if (dto.getSenhaAtual() == null || !passwordEncoder.matches(dto.getSenhaAtual(), existente.getSenha())) {
+                throw new RegraNegocioException("SENHA ATUAL INCORRETA");
+            }
+            existente.setSenha(passwordEncoder.encode(dto.getSenha()));
+        }
         repository.atualizar(existente);
         return existente;
     }

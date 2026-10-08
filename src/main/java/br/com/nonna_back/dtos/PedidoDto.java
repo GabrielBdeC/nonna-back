@@ -8,8 +8,10 @@ import jakarta.validation.constraints.Pattern;
 import java.util.List;
 
 public class PedidoDto {
-    @NotBlank(message = "O usuário é obrigatório")
-    private String idUsuario;
+    // idUsuario NAO vem no corpo da requisicao: quem esta fazendo o pedido
+    // e sempre o usuario do token JWT. O Controller preenche isso depois
+    // de montar a Entity -- assim ninguem consegue fazer pedido em nome
+    // de outra pessoa so alterando o JSON.
     @NotBlank(message = "O tipo de entrega é obrigatório")
     @Pattern(regexp = "RETIRADA|DELIVERY", message = "O tipo de entrega deve ser RETIRADA ou DELIVERY")
     private String tipoEntrega;
@@ -22,8 +24,6 @@ public class PedidoDto {
     @Valid
     private List<ItemPedidoDto> itens;
 
-    public String getIdUsuario() { return idUsuario; }
-    public void setIdUsuario(String idUsuario) { this.idUsuario = idUsuario; }
     public String getTipoEntrega() { return tipoEntrega; }
     public void setTipoEntrega(String tipoEntrega) { this.tipoEntrega = tipoEntrega; }
     public String getEndereco() { return endereco; }

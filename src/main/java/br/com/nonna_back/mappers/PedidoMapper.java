@@ -10,7 +10,6 @@ public class PedidoMapper {
 
     public Pedido toEntity(PedidoDto dto) {
         Pedido pedido = new Pedido();
-        pedido.setIdUsuario(dto.getIdUsuario());
         pedido.setTipoEntrega(dto.getTipoEntrega());
         pedido.setEndereco(dto.getEndereco());
         pedido.setFormaPagamento(dto.getFormaPagamento());

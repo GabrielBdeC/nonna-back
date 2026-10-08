@@ -68,11 +68,14 @@ CREATE TABLE reserva (
     motivo_cancelamento TEXT
 );
 
--- Usuarios de exemplo (login ainda nao existe, senha fica em texto puro por enquanto)
+-- Usuarios de exemplo. A senha ja vai com hash BCrypt (igual o back gera
+-- no cadastro), para o login funcionar direto com esses dados de teste:
+-- admin@nonna.com / admin123
+-- joao@example.com e maria@example.com / senha123
 INSERT INTO usuario (id, nome, email, senha, telefone, tipo) VALUES
-('123e4567-e89b-12d3-a456-426614174000', 'Administrador', 'admin@nonna.com', 'admin123', '48999990000', 'ADMINISTRADOR'),
-('223e4567-e89b-12d3-a456-426614174001', 'João Silva', 'joao@example.com', 'senha123', '48988887777', 'CLIENTE'),
-('323e4567-e89b-12d3-a456-426614174002', 'Maria Souza', 'maria@example.com', 'senha123', '48977776666', 'CLIENTE');
+('123e4567-e89b-12d3-a456-426614174000', 'Administrador', 'admin@nonna.com', '$2b$10$KMF.vHDjKLDH.LJyGxcQVuoZi2BFeJr0SeUBQXsapuxyyKKWWQN8q', '48999990000', 'ADMINISTRADOR'),
+('223e4567-e89b-12d3-a456-426614174001', 'João Silva', 'joao@example.com', '$2b$10$QB5AYcAcWzsxRfqQXzHpSevIGhqaDgni8441heWFLqTly6/NMK2Xm', '48988887777', 'CLIENTE'),
+('323e4567-e89b-12d3-a456-426614174002', 'Maria Souza', 'maria@example.com', '$2b$10$QB5AYcAcWzsxRfqQXzHpSevIGhqaDgni8441heWFLqTly6/NMK2Xm', '48977776666', 'CLIENTE');
 
 -- Categoria e produto de exemplo
 INSERT INTO categoria (id, nome) VALUES ('423e4567-e89b-12d3-a456-426614174003', 'Massas');
