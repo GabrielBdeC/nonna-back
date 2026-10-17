@@ -34,4 +34,14 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErroResponse> handleCredenciaisInvalidas(CredenciaisInvalidasException ex) {
         return new ResponseEntity<>(new ErroResponse(HttpStatus.UNAUTHORIZED.value(), List.of(ex.getMessage())), HttpStatus.UNAUTHORIZED);
     }
+
+    @ExceptionHandler(NaoAutenticadoException.class)
+    public ResponseEntity<ErroResponse> handleNaoAutenticado(NaoAutenticadoException ex) {
+        return new ResponseEntity<>(new ErroResponse(HttpStatus.UNAUTHORIZED.value(), List.of(ex.getMessage())), HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(NaoAutorizadoException.class)
+    public ResponseEntity<ErroResponse> handleNaoAutorizado(NaoAutorizadoException ex) {
+        return new ResponseEntity<>(new ErroResponse(HttpStatus.FORBIDDEN.value(), List.of(ex.getMessage())), HttpStatus.FORBIDDEN);
+    }
 }

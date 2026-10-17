@@ -5,6 +5,7 @@ import br.com.nonna_back.dtos.ProdutoDto;
 import br.com.nonna_back.dtos.ProdutoResponseDto;
 import br.com.nonna_back.entities.Produto;
 import br.com.nonna_back.mappers.ProdutoMapper;
+import br.com.nonna_back.security.Autorizacao;
 import br.com.nonna_back.services.ProdutoService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -26,6 +27,7 @@ public class ProdutoController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ProdutoResponseDto criar(@RequestBody @Valid ProdutoDto dto) {
+        Autorizacao.exigirAdministrador();
         return mapper.toResponseDto(service.criar(mapper.toEntity(dto)));
     }
 
@@ -45,12 +47,14 @@ public class ProdutoController {
 
     @PutMapping("/{id}")
     public ProdutoResponseDto atualizar(@PathVariable String id, @RequestBody @Valid ProdutoDto dto) {
+        Autorizacao.exigirAdministrador();
         return mapper.toResponseDto(service.atualizar(id, mapper.toEntity(dto)));
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void remover(@PathVariable String id) {
+        Autorizacao.exigirAdministrador();
         service.remover(id);
     }
 }

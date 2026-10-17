@@ -5,6 +5,7 @@ import br.com.nonna_back.dtos.CategoriaResponseDto;
 import br.com.nonna_back.dtos.PageDto;
 import br.com.nonna_back.entities.Categoria;
 import br.com.nonna_back.mappers.CategoriaMapper;
+import br.com.nonna_back.security.Autorizacao;
 import br.com.nonna_back.services.CategoriaService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -26,6 +27,7 @@ public class CategoriaController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public CategoriaResponseDto criar(@RequestBody @Valid CategoriaDto dto) {
+        Autorizacao.exigirAdministrador();
         return mapper.toResponseDto(service.criar(mapper.toEntity(dto)));
     }
 
@@ -39,12 +41,14 @@ public class CategoriaController {
 
     @PutMapping("/{id}")
     public CategoriaResponseDto atualizar(@PathVariable String id, @RequestBody @Valid CategoriaDto dto) {
+        Autorizacao.exigirAdministrador();
         return mapper.toResponseDto(service.atualizar(id, mapper.toEntity(dto)));
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void remover(@PathVariable String id) {
+        Autorizacao.exigirAdministrador();
         service.remover(id);
     }
 }
